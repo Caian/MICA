@@ -72,3 +72,14 @@ LIB_ROOTS :=
 
 # This section contains the build rules for all binaries that have special build rules.
 # See makefile.default.rules for the default build rules.
+
+SOURCES = $(wildcard *.cpp)
+OBJS = $(addprefix $(OBJDIR), $(notdir $(SOURCES:.cpp=.o)))
+
+# Build the intermediate object files.
+$(OBJDIR)%$(OBJ_SUFFIX): %.cpp
+	$(CXX) $(TOOL_CXXFLAGS) $(COMP_OBJ)$@ $<
+
+# Build the tool as a dll (shared object).
+$(OBJDIR)mica$(PINTOOL_SUFFIX): $(OBJS)
+	$(LINKER) $(TOOL_LDFLAGS_NOOPT) $(LINK_EXE)$@ $(^:%.h=) $(TOOL_LPATHS) $(TOOL_LIBS)
